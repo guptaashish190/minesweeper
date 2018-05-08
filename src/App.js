@@ -3,21 +3,25 @@ import styled from 'styled-components';
 
 var Grid5 = styled.div`
   display : grid;
-  grid-template-columns: repeat(5,1fr);
+  grid-template-columns: repeat(auto-fit, 100px);
   font-size: 1.3em;
 `;
-var Grid8 = styled.div`
+var Grid10 = styled.div`
   display : grid;
-  grid-template-columns: repeat(5,1fr);
+  grid-template-columns: repeat(10,1fr);
+  font-size: 1.8em;
 `;
-var Grid13 = styled.div`
+var Grid15 = styled.div`
   display : grid;
-  grid-template-columns: repeat(5,1fr);
+  grid-template-columns: repeat(15,1fr);
+  font-size: 2.2em;
 `;
-
+var Grid20 = styled.div`
+  display : grid;
+  grid-template-columns: repeat(20,1fr);
+  font-size:3em;
+`;
 var BoxStyle = styled.div`
-  width: 90px;
-  height: 90px;
   background : lightgreen
   border-radius: 4px;
   display: flex;
@@ -29,7 +33,8 @@ var BoxStyle = styled.div`
 class App extends Component {
 
   state = {
-    difficulty: 5
+    difficulty: 5,
+    gameOver: false
   }
 
   initBoard = () => {
@@ -40,20 +45,21 @@ class App extends Component {
         if (board[i] === undefined) {
           board[i] = [];
         }
-        board[i][j] =Math.random() > 0.5 ? 'mine' : 0;
+        board[i][j] = Math.random() > 0.7 ? 'mine' : 0;
       }
     }
     return board;
   }
 
-  addOneIfNotMine(i,j){
-    if(i === -1 || i === this.state.difficulty || j === -1 || j === this.state.difficulty){
+  addOneIfNotMine(i, j) {
+    if (i === -1 || i === this.state.difficulty || j === -1 || j === this.state.difficulty) {
       return
     }
-    if(this.boardList[i][j] != 'mine'){
+    if (this.boardList[i][j] != 'mine') {
       this.boardList[i][j]++;
     }
   }
+
   boardList = this.initBoard();
 
   scanBoard = () => {
@@ -62,70 +68,155 @@ class App extends Component {
       for (let j = 0; j < this.state.difficulty; j++) {
         let current = this.boardList[i][j];
         if (current === 'mine') {
-            this.addOneIfNotMine(i-1,j-1);
-            this.addOneIfNotMine(i,j-1);
-            this.addOneIfNotMine(i+1,j-1);
-            this.addOneIfNotMine(i+1,j);
-            this.addOneIfNotMine(i+1,j+1);
-            this.addOneIfNotMine(i,j+1);
-            this.addOneIfNotMine(i-1,j+1);
-            this.addOneIfNotMine(i-1,j);
+          this.addOneIfNotMine(i - 1, j - 1);
+          this.addOneIfNotMine(i, j - 1);
+          this.addOneIfNotMine(i + 1, j - 1);
+          this.addOneIfNotMine(i + 1, j);
+          this.addOneIfNotMine(i + 1, j + 1);
+          this.addOneIfNotMine(i, j + 1);
+          this.addOneIfNotMine(i - 1, j + 1);
+          this.addOneIfNotMine(i - 1, j);
         }
       }
     }
     return this.boardList;
   }
-
-  setBoard = (boardList)=>{
+  gameOverHandler = () => {
+    let cState = this.state;
+    cState.gameOver = true;
+    this.setState(cState);
+  }
+  setBoard = (boardList) => {
     let boardMap = [];
-    for(let i = 0; i< this.state.difficulty ; i++){
-      for(let j = 0; j< this.state.difficulty ; j++){
-        if (boardMap[i] === undefined){
-          boardMap[i] =[];
+    for (let i = 0; i < this.state.difficulty; i++) {
+      for (let j = 0; j < this.state.difficulty; j++) {
+        if (boardMap[i] === undefined) {
+          boardMap[i] = [];
         }
-        boardMap[i][j] = <Box key = {this.key++} value = {boardList[i][j]}/>;
+        boardMap[i][j] = <Box onGameOver={() => { this.gameOverHandler() }} reinit={() => this.reInit()} key={this.key++} value={boardList[i][j]} />;
+      }
+    }
+    return boardMap;
+  }
+
+  reInit = () => {
+    this.initBoard();
+    this.boardList = this.initBoard();
+    this.forceUpdate();
+
+    let cState = this.state;
+    cState.gameOver = false;
+    this.setState(cState)
+  }
+  key = 0;
+
+  setDifficulty = (difficulty)=>{
+    let cState = this.state;
+    cState.difficulty = difficulty;
+    this.setState(cState);
+    this.initBoard();
+    this.boardList = this.initBoard();
+  }
+
+  setGrid = (difficulty)=>{
+
+    if(difficulty === 5){
+      return (<Grid5 className="App">
+          {this.setBoard(this.boardList)}
+        </Grid5>);
+    }else if(difficulty === 10){
+      return (<Grid10 className="App">
+          {this.setBoard(this.boardList)}
+        </Grid10>);
+    }else if(difficulty === 15){
+      return (<Grid15 className="App">
+          {this.setBoard(this.boardList)}
+        </Grid15>);
+    }else{
+      return (<Grid20 className="App">
+          {this.setBoard(this.boardList)}
+        </Grid20>);
     }
   }
-  return boardMap;
-}
-
-  key = 0;
   render() {
     this.scanBoard(this.initBoard());
+
     return (
       <div className="wrapper">
-      <Grid5 className="App">
-        {this.setBoard(this.boardList)}
-      </Grid5>
+        {this.setGrid(this.state.difficulty)}
+
+        <div className="game-over-div">{this.state.gameOver ? "Game Over" : ""}</div>
+      
+        <Options setDifficulty={(difficulty) => this.setDifficulty(difficulty)}/>
+
       </div>
     );
   }
 }
+class Options extends Component {
 
+  setDifficulty = (difficulty)=>{
+    this.props.setDifficulty(difficulty);
+  }
+
+  render() {
+    return(
+    <div className="options">
+      <ul>
+        <li onClick={()=>{this.setDifficulty(5)}}>5X5</li>
+        <li onClick={()=>{this.setDifficulty(10)}}>10X10</li>
+        <li onClick={()=>{this.setDifficulty(15)}}>15X15</li>
+        <li onClick={()=>{this.setDifficulty(15)}}>20X20</li>
+      </ul>
+    </div>
+    );
+  }
+
+}
 class Box extends Component {
   state = {
-    visible : false
+    visible: false,
+    flagged: false
   }
 
-  setVisible = ()=>{
-    this.setState({visible: true});
-    this.checkMine();
+  setVisible = (dontCheck) => {
+    this.setState({ visible: true, flagged: this.state.flagged });
+
+    if (!dontCheck) this.checkMine();
+
   }
-  checkMine = ()=>{
-    if(this.props.value === 'mine'){
-      alert("Bhai haar gaya");
-      return true;
-    }
-    else{
-      return false;
+  checkMine = () => {
+    if (this.props.value === 'mine') {
+      this.setVisible(true);
     }
   }
+  flag = (e) => {
+    if (e.button === 1) {
+      this.setState(
+        {
+          visible: this.state.visible,
+          flagged: !this.state.flagged
+        }
+      );
+    }
+  }
+
+
   render() {
-    return (
-      this.state.visible ? 
-      <BoxStyle onClick = {()=>this.setVisible()} className="box">{this.props.value === 'mine' ? <img src="images/mine.png" width="30px" height="30px" /> : this.props.value}</BoxStyle> : 
-      <BoxStyle onClick = {()=>this.setVisible()} className="box"></BoxStyle>
-    );
+    if (this.state.flagged === true) {
+      return <BoxStyle onMouseDown={e => { this.flag(e) }} className="box"><img src="images/flag.png" width="20px" height="20px" /></BoxStyle>
+    }
+    else if (this.state.visible === true) {
+      if (this.props.value === 'mine') {
+        return <BoxStyle className="box"><img src="images/mine.png" width="30px" height="30px" /></BoxStyle>
+      } else if (this.props.value === 0) {
+        return <BoxStyle className="box zeroBox"></BoxStyle>
+      } else {
+        return <BoxStyle className="box">{this.props.value}</BoxStyle>
+      }
+    } else {
+      return <BoxStyle onMouseDown={e => { this.flag(e) }} onClick={() => this.setVisible()} className="box"></BoxStyle>
+    }
   }
 }
 export default App;
