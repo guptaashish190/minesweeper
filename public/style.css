@@ -1,0 +1,20 @@
+body{
+  
+  background: #acffc4;
+}
+.box{
+  transition: all 0.3s ease-out 0s;
+  cursor: pointer;
+}
+.box:hover{
+    background: #00e240;
+    transform: scale(1.1,1.1);
+}
+.wrapper{
+  position: absolute;
+  width: 97%;
+  height: 97%;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+}
