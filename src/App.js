@@ -2,24 +2,25 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 var Grid5 = styled.div`
+  width: 400px;
+  height: 400px;
   display : grid;
-  grid-template-columns: repeat(auto-fit, 100px);
+  grid-template-columns: repeat(5,1fr);
   font-size: 1.3em;
 `;
 var Grid10 = styled.div`
+  width: 500px;
+  height: 500px;
   display : grid;
   grid-template-columns: repeat(10,1fr);
   font-size: 1.8em;
 `;
 var Grid15 = styled.div`
+  width: 500px;
+  height: 500px;
   display : grid;
   grid-template-columns: repeat(15,1fr);
-  font-size: 2.2em;
-`;
-var Grid20 = styled.div`
-  display : grid;
-  grid-template-columns: repeat(20,1fr);
-  font-size:3em;
+  font-size: 1.5em;
 `;
 var BoxStyle = styled.div`
   background : lightgreen
@@ -110,7 +111,7 @@ class App extends Component {
   }
   key = 0;
 
-  setDifficulty = (difficulty)=>{
+  setDifficulty = (difficulty) => {
     let cState = this.state;
     cState.difficulty = difficulty;
     this.setState(cState);
@@ -118,24 +119,20 @@ class App extends Component {
     this.boardList = this.initBoard();
   }
 
-  setGrid = (difficulty)=>{
+  setGrid = (difficulty) => {
 
-    if(difficulty === 5){
+    if (difficulty === 5) {
       return (<Grid5 className="App">
-          {this.setBoard(this.boardList)}
-        </Grid5>);
-    }else if(difficulty === 10){
+        {this.setBoard(this.boardList)}
+      </Grid5>);
+    } else if (difficulty === 10) {
       return (<Grid10 className="App">
-          {this.setBoard(this.boardList)}
-        </Grid10>);
-    }else if(difficulty === 15){
+        {this.setBoard(this.boardList)}
+      </Grid10>);
+    } else {
       return (<Grid15 className="App">
-          {this.setBoard(this.boardList)}
-        </Grid15>);
-    }else{
-      return (<Grid20 className="App">
-          {this.setBoard(this.boardList)}
-        </Grid20>);
+        {this.setBoard(this.boardList)}
+      </Grid15>);
     }
   }
   render() {
@@ -146,8 +143,8 @@ class App extends Component {
         {this.setGrid(this.state.difficulty)}
 
         <div className="game-over-div">{this.state.gameOver ? "Game Over" : ""}</div>
-      
-        <Options setDifficulty={(difficulty) => this.setDifficulty(difficulty)}/>
+
+        <Options setDifficulty={(difficulty) => this.setDifficulty(difficulty)} />
 
       </div>
     );
@@ -155,20 +152,19 @@ class App extends Component {
 }
 class Options extends Component {
 
-  setDifficulty = (difficulty)=>{
+  setDifficulty = (difficulty) => {
     this.props.setDifficulty(difficulty);
   }
 
   render() {
-    return(
-    <div className="options">
-      <ul>
-        <li onClick={()=>{this.setDifficulty(5)}}>5X5</li>
-        <li onClick={()=>{this.setDifficulty(10)}}>10X10</li>
-        <li onClick={()=>{this.setDifficulty(15)}}>15X15</li>
-        <li onClick={()=>{this.setDifficulty(15)}}>20X20</li>
-      </ul>
-    </div>
+    return (
+      <div className="options">
+        <ul>
+          <li onClick={() => { this.setDifficulty(5) }}>5X5</li>
+          <li onClick={() => { this.setDifficulty(10) }}>10X10</li>
+          <li onClick={() => { this.setDifficulty(15) }}>15X15</li>
+        </ul>
+      </div>
     );
   }
 
@@ -215,7 +211,7 @@ class Box extends Component {
         return <BoxStyle className="box">{this.props.value}</BoxStyle>
       }
     } else {
-      return <BoxStyle onMouseDown={e => { this.flag(e) }} onClick={() => this.setVisible()} className="box"></BoxStyle>
+      return <BoxStyle onMouseDown={e => { this.flag(e) }} onClick={() => this.setVisible()} className="box"><div className="empty-box"></div></BoxStyle>
     }
   }
 }
