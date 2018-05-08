@@ -1,5 +1,4 @@
 body{
-  
   background: #acffc4;
 }
 .box{
@@ -17,4 +16,24 @@ body{
   display: flex;
   justify-content: center;
   align-items:center;
+}
+.zeroBox{
+  background: #00e240 !important;
+}
+.game-over-div{
+  position: absolute;
+  bottom: 10px;
+  left: 45%;
+  font-size: 2em;
+  color: rgb(255, 115, 115);
+}
+.options{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.options li{
+  list-style-type: none;
+  background: rgb(255, 158, 93);
+  margin: 30px
 }
