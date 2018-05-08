@@ -40,7 +40,7 @@ class App extends Component {
         if (board[i] === undefined) {
           board[i] = [];
         }
-        board[i][j] =Math.random() > 0.5 ? 'mine' : 0;
+        board[i][j] =Math.random() > 0.7 ? 'mine' : 0;
       }
     }
     return board;
@@ -54,6 +54,7 @@ class App extends Component {
       this.boardList[i][j]++;
     }
   }
+
   boardList = this.initBoard();
 
   scanBoard = () => {
@@ -89,7 +90,12 @@ class App extends Component {
   return boardMap;
 }
 
+
+  setAllVisible = ()=>{
+
+  }
   key = 0;
+
   render() {
     this.scanBoard(this.initBoard());
     return (
@@ -104,28 +110,44 @@ class App extends Component {
 
 class Box extends Component {
   state = {
-    visible : false
+    visible : false,
+    flagged: false
   }
 
   setVisible = ()=>{
-    this.setState({visible: true});
+    this.setState({visible: true, flagged: this.state.flagged});
     this.checkMine();
   }
   checkMine = ()=>{
     if(this.props.value === 'mine'){
-      alert("Bhai haar gaya");
+    //  alert("Bhai haar gaya");
       return true;
     }
     else{
       return false;
     }
   }
-  render() {
-    return (
-      this.state.visible ? 
-      <BoxStyle onClick = {()=>this.setVisible()} className="box">{this.props.value === 'mine' ? <img src="images/mine.png" width="30px" height="30px" /> : this.props.value}</BoxStyle> : 
-      <BoxStyle onClick = {()=>this.setVisible()} className="box"></BoxStyle>
+  flag = (e)=>{
+    if(e.button === 1){
+     this.setState(
+      {
+        visible: this.state.visible,
+        flagged: !this.state.flagged
+      }
     );
+  }
+  }
+
+
+  render() {
+    if(this.state.flagged === true){
+     return <BoxStyle onMouseDown = {e => {this.flag(e)} } className="box"><img src = "images/flag.png" width = "20px" height = "20px"/></BoxStyle>
+    }
+    else if(this.state.visible === true){
+      return <BoxStyle  onClick = {()=>this.setVisible()} className="box">{this.props.value === 'mine' ? <img src="images/mine.png" width="30px" height="30px" /> : this.props.value}</BoxStyle> 
+    }else{
+      return <BoxStyle onMouseDown = {e => {this.flag(e)} } onClick = {()=>this.setVisible()} className="box"></BoxStyle>
+    }
   }
 }
 export default App;
